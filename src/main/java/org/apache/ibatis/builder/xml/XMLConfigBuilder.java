@@ -307,6 +307,12 @@ public class XMLConfigBuilder extends BaseBuilder {
     }
   }
 
+
+  /*
+  XNode入参内容如下：
+  <transactionManager type="JDBC"/>
+  对应JdbcTransactionFactory类
+   */
   private TransactionFactory transactionManagerElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");
@@ -318,6 +324,17 @@ public class XMLConfigBuilder extends BaseBuilder {
     throw new BuilderException("Environment declaration requires a TransactionFactory.");
   }
 
+
+  /*
+  入参XNode的内容如下:
+  <dataSource type="POOLED">
+      <property name="driver" value="com.mysql.cj.jdbc.Driver"/>
+      <property name="url" value="jdbc:mysql://localhost:3306/it_qk?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC"/>
+      <property name="username" value="root"/>
+      <property name="password" value="root"/>
+    </dataSource>
+    对应PooledDataSourceFactory类
+   */
   private DataSourceFactory dataSourceElement(XNode context) throws Exception {
     if (context != null) {
       String type = context.getStringAttribute("type");

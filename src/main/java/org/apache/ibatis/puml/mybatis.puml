@@ -1,0 +1,89 @@
+@startuml
+
+abstract class BaseBuilder {
+    # Configuration configuration;
+}
+class XMLConfigBuilder {
+    # private final XPathParser parser;
+    # private boolean parsed;
+    + public Configuration parse()
+    + private void parseConfiguration(XNode root)
+}
+
+class XMLMapperBuilder {
+    # XPathParser parser;
+    # MapperBuilderAssistant builderAssistant;
+}
+
+class XMLStatementBuilder {
+    # XPathParser parser;
+    # XNode context;
+    + void parseStatementNode();
+}
+
+class MapperRegistry {
+    # Configuration configuration;
+    # Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+}
+class MapperProxyFactory<T> {
+    # Class<T> mapperInterface;
+    # Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
+}
+class MapperProxy<T> {
+    # SqlSession sqlSession;
+    # Class<T> mapperInterface;
+    # Map<Method, MapperMethod> methodCache;
+}
+
+
+class MappedStatement {
+    # Configuration configuration;
+    # StatementType statementType;
+    # ResultSetType resultSetType;
+    # ParameterMap parameterMap;
+}
+
+class Environment {
+    # final TransactionFactory transactionFactory;
+    # final DataSource dataSource;
+}
+class Configuration {
+    # Set<String> loadedResources;
+    # Map<String, MappedStatement> mappedStatements;
+    # MapperRegistry mapperRegistry = new MapperRegistry(this);
+    + Environment environment;
+}
+
+class SqlSessionFactoryBuilder {
+    + SqlSessionFactory build(Reader reader)
+}
+
+interface SqlSessionFactory {
+    + SqlSession openSession();
+    + Configuration getConfiguration();
+}
+
+class DefaultSqlSessionFactory {
+    + Configuration getConfiguration();
+}
+
+
+XMLMapperBuilder  --|> BaseBuilder
+XMLConfigBuilder  --|> BaseBuilder
+XMLMapperBuilder  ..> XMLConfigBuilder
+XMLStatementBuilder  ..> XMLMapperBuilder
+XMLStatementBuilder  --|> BaseBuilder
+
+Configuration  --> BaseBuilder
+
+SqlSessionFactory  --> SqlSessionFactoryBuilder
+DefaultSqlSessionFactory  ..|> SqlSessionFactory
+Configuration  --> DefaultSqlSessionFactory
+
+MappedStatement --> Configuration
+Environment  --> Configuration
+
+MapperRegistry  --> Configuration
+MapperProxyFactory  --> MapperRegistry
+MapperProxy  --> MapperProxyFactory
+@enduml

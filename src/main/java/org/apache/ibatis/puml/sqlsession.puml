@@ -1,0 +1,77 @@
+@startuml
+
+class SqlSessionFactoryBuilder {
+    + SqlSessionFactory build(Reader reader)
+}
+
+interface SqlSessionFactory {
+    + SqlSession openSession();
+    + Configuration getConfiguration();
+}
+
+class DefaultSqlSessionFactory {
+    + Configuration getConfiguration();
+}
+
+class TransactionFactory {
+    # Transaction newTransaction(DataSource dataSource, TransactionIsolationLevel level, boolean autoCommit);
+    # Transaction newTransaction(Connection conn);
+}
+
+class Transaction {
+    + Connection getConnection() throws SQLException;
+    + void commit() throws SQLException;
+    + void rollback() throws SQLException;
+    + void close() throws SQLException;
+}
+
+class Executor {
+    # ResultHandler NO_RESULT_HANDLER = null;
+}
+
+class BaseExecutor {
+    # protected Transaction transaction;
+    # protected Executor wrapper;
+    # protected PerpetualCache localCache;
+    # protected Configuration configuration;
+}
+
+class SimpleExecutor {
+    + public <E> List<E> doQuery(MappedStatement ms, Object parameter, RowBounds rowBounds, ResultHandler resultHandler, BoundSql boundSql) throws SQLException
+    + protected <E> Cursor<E> doQueryCursor(MappedStatement ms, Object parameter, RowBounds rowBounds, BoundSql boundSql) throws SQLException
+}
+
+class CachingExecutor {
+    # private Executor delegate;
+    # private TransactionalCacheManager tcm = new TransactionalCacheManager();
+
+}
+
+class SqlSession {
+    + Configuration getConfiguration();
+    # <T> T selectOne(String statement);
+    # <E> List<E> selectList(String statement);
+}
+
+class DefaultSqlSession {
+    # private Configuration configuration;
+    # private Executor executor;
+    # private boolean autoCommit;
+}
+
+DefaultSqlSession  --|> SqlSession
+SqlSession --> SqlSessionFactory
+
+Transaction  --> BaseExecutor
+Transaction  --> TransactionFactory
+
+CachingExecutor  --|> Executor
+Executor  --> CachingExecutor
+BaseExecutor  --|> Executor
+SimpleExecutor --|> BaseExecutor
+Executor  --> DefaultSqlSession
+
+
+DefaultSqlSessionFactory  ..|> SqlSessionFactory
+SqlSessionFactory  --> SqlSessionFactoryBuilder
+@enduml

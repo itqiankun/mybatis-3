@@ -1,0 +1,41 @@
+@startuml
+
+class MapperRegistry {
+    # Configuration configuration;
+    # Map<Class<?>, MapperProxyFactory<?>> knownMappers = new HashMap<Class<?>, MapperProxyFactory<?>>();
+}
+
+class MapperProxyFactory<T> {
+    # Class<T> mapperInterface;
+    # Map<Method, MapperMethod> methodCache = new ConcurrentHashMap<Method, MapperMethod>();
+}
+
+class MapperProxy<T> {
+    # SqlSession sqlSession;
+    # Class<T> mapperInterface;
+    # private final Map<Method, MapperMethod> methodCache;
+    + public Object invoke(Object proxy, Method method, Object[] args)
+}
+
+class MapperMethod {
+    # private final SqlCommand command;
+    # private final MethodSignature method;
+}
+
+class SqlCommand {
+    # private final String name;
+    # private final SqlCommandType type;
+}
+
+enum SqlCommandType {
+    # UNKNOWN, INSERT, UPDATE, DELETE, SELECT, FLUSH;
+}
+
+
+
+SqlCommandType  --> SqlCommand
+SqlCommand  --> MapperMethod
+MapperMethod  --> MapperProxy
+MapperProxy  --> MapperProxyFactory
+MapperProxyFactory  --> MapperRegistry
+@enduml

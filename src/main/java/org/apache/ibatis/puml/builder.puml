@@ -1,0 +1,40 @@
+@startuml
+
+abstract class BaseBuilder {
+    # Configuration configuration;
+    # protected final TypeAliasRegistry typeAliasRegistry;
+    # protected final TypeHandlerRegistry typeHandlerRegistry;
+}
+
+class XMLMapperBuilder {
+    # XPathParser parser;
+    # MapperBuilderAssistant builderAssistant;
+    + private void configurationElement(XNode context)
+}
+
+class SqlSourceBuilder {
+    # private static final String parameterProperties = "javaType,jdbcType,mode,numericScale,resultMap,typeHandler,jdbcTypeName";
+}
+
+class XMLConfigBuilder {
+    # private final XPathParser parser;
+    # private boolean parsed;
+    + public Configuration parse()
+    + private void parseConfiguration(XNode root)
+}
+
+class XMLStatementBuilder {
+    # private final MapperBuilderAssistant builderAssistant;
+    # private final XNode context;
+    # private final String requiredDatabaseId;
+    + public void parseStatementNode()
+}
+
+
+SqlSourceBuilder  --|> BaseBuilder
+XMLMapperBuilder  --|> BaseBuilder
+XMLConfigBuilder  --|> BaseBuilder
+XMLMapperBuilder  ..> XMLConfigBuilder
+XMLStatementBuilder  ..> XMLMapperBuilder
+XMLStatementBuilder  --|> BaseBuilder
+@enduml
